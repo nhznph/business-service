@@ -1,0 +1,8 @@
+user.url: http://localhost:8083
+invoice.url: http://localhost:8084
+mail:
+  url: http://mail-servicee.herokuapp.com
+#mail:
+#  url: http://localhost:8080
+server:
+  port: 8085

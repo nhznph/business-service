@@ -6,7 +6,11 @@ import com.dxc.business.api.MailApi;
 import com.dxc.business.api.UserApi;
 import com.dxc.business.api.model.Invoice;
 import com.dxc.business.api.model.User;
+import com.dxc.business.schedule.ScheduledTasks;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -16,6 +20,7 @@ import java.util.List;
 
 @Service
 public class BusinessService {
+    private static final Logger logger = LoggerFactory.getLogger(ScheduledTasks.class);
     @Autowired
     private MailApi mailApi;
 
@@ -25,8 +30,52 @@ public class BusinessService {
     @Autowired
     private UserApi userApi;
 
-    // mail
+    //chay lap sd fixedDelay and fixedRate
+
+//    @Scheduled(fixedRate = 2000)
+//    public void scheduleTaskWithFixedRate() {
+//        // call send email method here
+//        logger.info("Send email to producers to inform quantity sold items");
+//        // 2s se co message
+//    }
+
+//    @Scheduled(fixedDelay = 10000)
+//    public void scheduleTaskWithFixedDelay() {
+//        // Call send email method here
+//        // Pretend it takes 1000ms
+//        try {
+//            Thread.sleep(1000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//        logger.info("Send email to producers to inform quantity sold items");
+//    }
+//    fixedDelay = 10000, nhưng khoảng cách giữa các lần log là khoảng 11s
+//            . Lý do việc thực thi hàm này hết 1s và phải chờ 10s sau nó mới lại dc gọi lại
+
+
+    //. Chạy lặp với khoảng thời gian fixedRate sau khi đi deploy initialDelay
+    // (Sử dụng kết hợp fixedRate và initialDelay)
+//    bạn chạy tác vụ gửi mail ngay khi deploy xong, thì initialDelay cho phép bạn thực hiện
+//    việc này sau 1 khoảng thời gian là initialDelay(miliseconds)
+
+//    @Scheduled(fixedRate = 2000, initialDelay = 10000)
+//    public void scheduleTaskWithInitialDelay() {
+//        logger.info("Send email to producers to inform quantity sold items");
+//    }
+
+
+    //Hẹn giờ với cron (Sử dụng cron)
+    //Cũng vẫn yêu cầu gửi mail, nhưng bạn muốn gửi vào 12h thứ 6 hàng tuần, hoặc 23h59 ngày cuối tháng .v.v.v. Những thứ bên trên kia là ko đủ.
+    // Vậy bạn hãy nghĩ tới cron. Mình ví dụ, log ra màn hình vào giây 15 của mỗi phút
+    @Scheduled(cron = "0 */2 * ? * *")
+    public void scheduleTaskWithCronExpression() {
+        logger.info("Send email to producers to inform quantity sold items");
+    }
+    // link: https://www.freeformatter.com/cron-expression-generator-quartz.html
+
     public String sendMail(String userId, String mailTo, String mailSubject, String mailText) {
+
         User checkUser = userApi.getUserById(userId);
         if (checkUser != null) {
             if (checkUser.getEmail().endsWith("@gmail.com")) {
@@ -37,17 +86,12 @@ public class BusinessService {
         }
         Date a = new Date();
         List<Invoice> checkListAmountOfInvoice = invoiceApi.viewReport(userId, "monthly", String.valueOf(getMonth(a)));
-        if (checkListAmountOfInvoice.size() == 4) {
-            if (getTotalMoneyMonth(checkListAmountOfInvoice) > checkUser.getLimited()) {
-                mailSubject = "Expense limit";
-                mailText = "Total of monthly expense limit";
-                return mailApi.sendEmail(userId, mailTo, mailSubject, mailText);
-            } else {
-                return "the total amount is not greater than the limit";
-            }
-
+        if (getTotalMoneyMonth(checkListAmountOfInvoice) > checkUser.getLimited()) {
+            mailSubject = "Expense limit";
+            mailText = "Total of monthly expense limit";
+            return mailApi.sendEmail(userId, mailTo, mailSubject, mailText);
         } else {
-            return "month does not have enough invoices ";
+            return "the total amount is not greater than the limit";
         }
     }
 

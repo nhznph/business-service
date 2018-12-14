@@ -6,6 +6,8 @@ import com.dxc.business.api.MailApi;
 import com.dxc.business.api.UserApi;
 import com.dxc.business.api.model.Invoice;
 import com.dxc.business.api.model.User;
+import com.dxc.business.common.BusinessError;
+import com.dxc.business.exception.BusinessException;
 import com.dxc.business.schedule.ScheduledTasks;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,7 +93,7 @@ public class BusinessService {
             mailText = "Total of monthly expense limit";
             return mailApi.sendEmail(userId, mailTo, mailSubject, mailText);
         } else {
-            return "the total amount is not greater than the limit";
+            throw new BusinessException(BusinessError.USER_DOES_NOT_ACTIVATE);
         }
     }
 
@@ -101,7 +103,7 @@ public class BusinessService {
         if (checkUser.isActivated()) {
             return invoiceApi.addInvoice(userId, invoice);
         } else {
-            return "userId does not activate";
+            throw new BusinessException(BusinessError.USER_DOES_NOT_ACTIVATE);
         }
 
     }
@@ -113,10 +115,10 @@ public class BusinessService {
             if (userId.equals(invoice.getUserId())) {
                 return invoiceApi.deleteInvoice(invoiceNo, userId);
             } else {
-                return "userId have no invoice";
+                throw new BusinessException(BusinessError.USER_HAVE_NO_INVOICE);
             }
         } else {
-            return "userId does not activate";
+            throw new BusinessException(BusinessError.USER_DOES_NOT_ACTIVATE);
         }
     }
 
@@ -129,7 +131,7 @@ public class BusinessService {
         if (checkUser.isActivated()) {
             return invoiceApi.updateInvoice(invoiceNo, userId, invoice);
         } else {
-            return "userId does not activate";
+            throw new BusinessException(BusinessError.USER_DOES_NOT_ACTIVATE);
         }
     }
 
@@ -166,7 +168,7 @@ public class BusinessService {
         return userApi.getUserByName(firstName, lastName);
     }
 
-    public String setLimitMonthly(String userId, String limit) {
+    public User setLimitMonthly(String userId, Integer limit) {
         return userApi.setLimitMonthly(userId, limit);
     }
 

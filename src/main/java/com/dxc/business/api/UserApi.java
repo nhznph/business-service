@@ -37,6 +37,6 @@ public interface UserApi {
                              @RequestParam("lastName") String lastName);
 
     @PutMapping(value = "/v1/{userId}/setLimited", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    String setLimitMonthly(@PathVariable("userId") String userId,
-                           @RequestParam("limit") String limit);
+    User setLimitMonthly(@PathVariable("userId") String userId,
+                           @RequestParam("limit") Integer limit);
 }

@@ -64,11 +64,11 @@ public class V1ApiController implements V1Api {
         return delegate.searchUserByName(firstName, lastName);
     }
 
-    public ResponseEntity<String> sendMail(@ApiParam(value = "user Id",required=true) @PathVariable("userId") String userId,@ApiParam(value = "Mail To .",hidden = true) @Valid @RequestParam(value = "mailTo", required = false) String mailTo,@ApiParam(value = "Mail Subject.",hidden = true) @Valid @RequestParam(value = "mailSubject", required = false) String mailSubject,@ApiParam(value = "Mail Text.",hidden = true) @Valid @RequestParam(value = "mailText", required = false) String mailText) {
+    public ResponseEntity<String> sendMail(@ApiParam(value = "user Id",required=true) @PathVariable("userId") String userId,@ApiParam(value = "Mail To .") @Valid @RequestParam(value = "mailTo", required = false) String mailTo,@ApiParam(value = "Mail Subject.") @Valid @RequestParam(value = "mailSubject", required = false) String mailSubject,@ApiParam(value = "Mail Text.") @Valid @RequestParam(value = "mailText", required = false) String mailText) {
         return delegate.sendMail(userId, mailTo, mailSubject, mailText);
     }
 
-    public ResponseEntity<String> setLimitedMonthly(@ApiParam(value = "user Id",required=true) @PathVariable("userId") String userId,@NotNull @ApiParam(value = "monthly limited", required = true) @Valid @RequestParam(value = "limit", required = true) String limit) {
+    public ResponseEntity<User> setLimitedMonthly(@ApiParam(value = "user Id",required=true) @PathVariable("userId") String userId,@NotNull @ApiParam(value = "monthly limited", required = true) @Valid @RequestParam(value = "limit", required = true) Integer limit) {
         return delegate.setLimitedMonthly(userId, limit);
     }
 

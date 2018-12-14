@@ -137,14 +137,14 @@ public interface V1Api {
     ResponseEntity<String> sendMail(@ApiParam(value = "user Id",required=true) @PathVariable("userId") String userId,@ApiParam(value = "Mail To .") @Valid @RequestParam(value = "mailTo", required = false) String mailTo,@ApiParam(value = "Mail Subject.") @Valid @RequestParam(value = "mailSubject", required = false) String mailSubject,@ApiParam(value = "Mail Text.") @Valid @RequestParam(value = "mailText", required = false) String mailText);
 
 
-    @ApiOperation(value = "set the monthly limited expenses for notification.", nickname = "setLimitedMonthly", notes = "set the monthly limited expenses for notification .", response = String.class, tags={ "user", })
+    @ApiOperation(value = "set the monthly limited expenses for notification.", nickname = "setLimitedMonthly", notes = "set the monthly limited expenses for notification .", response = User.class, tags={ "user", })
     @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "set the monthly limit", response = String.class),
+        @ApiResponse(code = 200, message = "successful operation", response = User.class),
         @ApiResponse(code = 500, message = "Internal Server Error") })
     @RequestMapping(value = "/v1/{userId}/setLimited",
         produces = { "application/json" }, 
         method = RequestMethod.PUT)
-    ResponseEntity<String> setLimitedMonthly(@ApiParam(value = "user Id",required=true) @PathVariable("userId") String userId,@NotNull @ApiParam(value = "monthly limited", required = true) @Valid @RequestParam(value = "limit", required = true) String limit);
+    ResponseEntity<User> setLimitedMonthly(@ApiParam(value = "user Id",required=true) @PathVariable("userId") String userId,@NotNull @ApiParam(value = "monthly limited", required = true) @Valid @RequestParam(value = "limit", required = true) Integer limit);
 
 
     @ApiOperation(value = "Activate user.", nickname = "updateActivateUser", notes = "Activate user .", response = String.class, tags={ "admin", })
@@ -174,7 +174,7 @@ public interface V1Api {
         @ApiResponse(code = 404, message = "Invoice not found"),
         @ApiResponse(code = 405, message = "Validation exception") })
     @RequestMapping(value = "/v1/{userId}/invoices/{invoiceNo}",
-        produces = { "application/json" }, 
+        produces = { "text/plain" }, 
         consumes = { "application/json" },
         method = RequestMethod.PUT)
     ResponseEntity<String> updateInvoice(@ApiParam(value = "ID of invoice to update",required=true) @PathVariable("invoiceNo") String invoiceNo,@ApiParam(value = "ID of user exist",required=true) @PathVariable("userId") String userId,@ApiParam(value = "invoice object need to be updated" ,required=true )  @Valid @RequestBody Invoice body);
@@ -187,7 +187,7 @@ public interface V1Api {
         @ApiResponse(code = 404, message = "user not found"),
         @ApiResponse(code = 405, message = "Validation exception") })
     @RequestMapping(value = "/v1/user/{id}",
-        produces = { "application/json" }, 
+        produces = { "text/plain" }, 
         consumes = { "application/json" },
         method = RequestMethod.PUT)
     ResponseEntity<String> updateUser(@ApiParam(value = "ID of user to update",required=true) @PathVariable("id") String id,@ApiParam(value = "user object need to be updated" ,required=true )  @Valid @RequestBody User body);
